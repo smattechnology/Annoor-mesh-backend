@@ -1,6 +1,7 @@
 import re
 import datetime
 from datetime import timedelta
+from typing import Optional
 
 from pydantic import EmailStr
 
@@ -52,7 +53,7 @@ class NameParser:
     def get_first_name(self) -> str:
         return self.first_name
 
-    def get_middle_name(self) -> str | None:
+    def get_middle_name(self) -> Optional[str]:
         return self.middle_name
 
     def get_last_name(self) -> str:
