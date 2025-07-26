@@ -5,7 +5,7 @@ from fastapi import APIRouter, Response, Request, Depends, HTTPException, status
 from app.auth.models import User, Email, RoleEnum, Password, Info, StatusEnum
 from app.database import get_db
 from sqlalchemy.orm import Session
-from app.lib import create_access_token, verify_access_token, generate_username, NameParser
+from app.utils import create_access_token, verify_access_token, generate_username, NameParser
 
 from app.auth.schemas import UserLogin, UserRegister, UserResponse
 
