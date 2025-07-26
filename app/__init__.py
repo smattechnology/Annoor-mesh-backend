@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.auth import router as authROuter
-from app.user import router as userRouter
-from app.mess import router as messRouter
+# from app.auth import router as authROuter
+# from app.user import router as userRouter
+# from app.mess import router as messRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -22,6 +22,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router=authROuter,prefix="/auth",tags=["Auth"])
-app.include_router(router=userRouter,prefix="/user",tags=["User"])
-app.include_router(router=messRouter,prefix="/mess",tags=["Mess"])
+# app.include_router(router=authROuter,prefix="/auth",tags=["Auth"])
+# app.include_router(router=userRouter,prefix="/user",tags=["User"])
+# app.include_router(router=messRouter,prefix="/mess",tags=["Mess"])
+
+
+@app.get("/")
+async def get_root():
+    return "Its working"
