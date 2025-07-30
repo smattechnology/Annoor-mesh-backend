@@ -23,8 +23,8 @@ class Settings(BaseSettings):
 
     # Database Config
     DB_HOST: str = os.environ.get("DB_HOST", 'localhost')
-    DB_USER: str = os.environ.get("DB_USER", 'root')
-    DB_PASS: str = os.environ.get("DB_PASS", 'Admin_1234')
+    DB_USER: str = os.environ.get("DB_USER", 'db_admin')
+    DB_PASS: str = os.environ.get("DB_PASS", 'TechNebula_2025')
     DB_PORT: int = int(os.environ.get("DB_PORT", 3306))
     DB_DB: str = os.environ.get("DB_DB", 'annoor_mesh')
     DB_PROVIDER_MYSQL: str = os.environ.get("DP_PROVIDER_MYSQL", "mysql+pymysql")
