@@ -80,6 +80,7 @@ async def get_login(data: UserLogin, response: Response, db: Session = Depends(g
         httponly=True,
         secure=True,
         samesite="lax",
+        domain="localhost"
     )
 
     return {
@@ -149,7 +150,7 @@ async def get_register(data: UserRegister, response: Response, db: Session = Dep
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="http://192.168.0.110:3000"
+        domain="localhost"
     )
     return {
         "user_id": new_user.id,
