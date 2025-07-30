@@ -79,7 +79,7 @@ async def get_login(data: UserLogin, response: Response, db: Session = Depends(g
         value=token,
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="lax",
     )
 
     return {
@@ -148,7 +148,8 @@ async def get_register(data: UserRegister, response: Response, db: Session = Dep
         value=token,
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="lax",
+        domain="http://192.168.0.110:3000"
     )
     return {
         "user_id": new_user.id,
@@ -178,7 +179,8 @@ async def get_logout(response: Response, request: Request):
         key="access_token",
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="lax",
+        domain="http://192.168.0.110:3000"
     )
 
     return {
