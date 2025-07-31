@@ -80,7 +80,7 @@ async def get_login(data: UserLogin, response: Response, db: Session = Depends(g
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="annoor.nuraloom.xyz"
+        domain="nuraloom.xyz"
     )
 
     return {
