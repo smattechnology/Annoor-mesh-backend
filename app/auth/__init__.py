@@ -181,7 +181,7 @@ async def get_logout(response: Response, request: Request):
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="annoor.nuraloom.xyz"
+        domain="nuraloom.xyz"
     )
 
     return {
