@@ -12,6 +12,7 @@ origins = [
     "http://localhost:3000",  # React dev server
     "http://localhost:3001",  # React dev server
     "https://frontend.nuraloom.xyz",
+    "http://annoor.nuraloom.xyz",
     "http://192.168.0.110:3000",
 ]
 
