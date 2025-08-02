@@ -2,6 +2,7 @@ import uuid
 from datetime import timedelta
 from fastapi import APIRouter, Response, Request, Depends, HTTPException, status
 
+from app import settings
 from app.auth.models import User, Email, RoleEnum, Password, Info, StatusEnum
 from app.database import get_db
 from sqlalchemy.orm import Session
@@ -15,7 +16,7 @@ router = APIRouter()
 @router.get("/")
 async def get_auth(request: Request, db: Session = Depends(get_db)):
     # 1. Get token from cookie
-    access_token = request.cookies.get("access_token")
+    access_token = request.cookies.get(settings.FRONTEND_ACCESS_COOKIE_KEY)
     if not access_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -75,12 +76,12 @@ async def get_login(data: UserLogin, response: Response, db: Session = Depends(g
     token = create_access_token(data=token_data, expires_delta=timedelta(minutes=60))
 
     response.set_cookie(
-        key="access_token",
+        key=settings.FRONTEND_ACCESS_COOKIE_KEY,
         value=token,
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="nuraloom.xyz"
+        domain=settings.FRONTEND_COOKIE_DOMAIN
     )
 
     return {
@@ -145,12 +146,12 @@ async def get_register(data: UserRegister, response: Response, db: Session = Dep
     token = create_access_token(data=token_data, expires_delta=timedelta(minutes=60))
 
     response.set_cookie(
-        key="access_token",
+        key=settings.FRONTEND_ACCESS_COOKIE_KEY,
         value=token,
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="annoor.nuraloom.xyz"
+        domain=settings.FRONTEND_COOKIE_DOMAIN
     )
     return {
         "user_id": new_user.id,
@@ -177,11 +178,11 @@ async def get_logout(response: Response, request: Request):
         )
 
     response.delete_cookie(
-        key="access_token",
+        key=settings.FRONTEND_ACCESS_COOKIE_KEY,
         httponly=True,
         secure=True,
         samesite="lax",
-        domain="nuraloom.xyz"
+        domain=settings.FRONTEND_COOKIE_DOMAIN
     )
 
     return {

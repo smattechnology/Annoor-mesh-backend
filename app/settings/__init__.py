@@ -21,6 +21,16 @@ class Settings(BaseSettings):
     # FrontEnd Application
     FRONTEND_HOST: str = os.environ.get("FRONTEND_HOST", "http://localhost:3000")
 
+    ORIGINS: list[str] = (
+        [
+            "http://localhost:3000",
+            "http://localhost:3001",
+        ] if DEBUG else [
+            "https://frontend.nuraloom.xyz",
+            "https://annoor.nuraloom.xyz",
+        ]
+    )
+
     # Database Config
     DB_HOST: str = os.environ.get("DB_HOST", 'localhost')
     DB_USER: str = os.environ.get("DB_USER", 'db_admin')
@@ -30,7 +40,6 @@ class Settings(BaseSettings):
     DB_PROVIDER_MYSQL: str = os.environ.get("DP_PROVIDER_MYSQL", "mysql+pymysql")
     DB_PROVIDER_POSTGRES: str = os.environ.get("DP_PROVIDER_MYSQL", "postgresql+psycopg")
     DATABASE_URI: str = f"{DB_PROVIDER_MYSQL}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_DB}"
-
 
     UPLOAD_DIR: str = os.path.join(Path(""), "uploads")
 
@@ -46,6 +55,11 @@ class Settings(BaseSettings):
     SESSION_COOKIE_KEY: str = os.environ.get("SESSION_COOKIE_KEY", "x-smat-session")
 
     PROFILE_PICTURE_UPLOAD_DIR: str = os.path.join(UPLOAD_DIR, "profiles")
+
+    # COOKIE SETTINGS
+    FRONTEND_COOKIE_DOMAIN:str = ("localhost" if DEBUG else "nuraloom.xyz")
+    FRONTEND_ACCESS_COOKIE_KEY:str = "access_token"
+
 
     class Config:
         case_sensitive = True
