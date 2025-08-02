@@ -2,7 +2,7 @@ import uuid
 from datetime import timedelta
 from fastapi import APIRouter, Response, Request, Depends, HTTPException, status
 
-from app import settings
+from app.settings import settings
 from app.auth.models import User, Email, RoleEnum, Password, Info, StatusEnum
 from app.database import get_db
 from sqlalchemy.orm import Session

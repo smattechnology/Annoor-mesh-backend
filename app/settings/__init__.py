@@ -33,13 +33,20 @@ class Settings(BaseSettings):
 
     # Database Config
     DB_HOST: str = os.environ.get("DB_HOST", 'localhost')
+
     DB_USER: str = os.environ.get("DB_USER", 'db_admin')
     DB_PASS: str = os.environ.get("DB_PASS", 'TechNebula_2025')
+
+    LOCAL_DB_USER: str = os.environ.get("DB_USER", 'root')
+    LOCAL_DB_PASS: str = os.environ.get("DB_PASS", 'Admin_1234')
+
     DB_PORT: int = int(os.environ.get("DB_PORT", 3306))
     DB_DB: str = os.environ.get("DB_DB", 'annoor_mesh')
+
     DB_PROVIDER_MYSQL: str = os.environ.get("DP_PROVIDER_MYSQL", "mysql+pymysql")
     DB_PROVIDER_POSTGRES: str = os.environ.get("DP_PROVIDER_MYSQL", "postgresql+psycopg")
-    DATABASE_URI: str = f"{DB_PROVIDER_MYSQL}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_DB}"
+
+    DATABASE_URI: str = f"{DB_PROVIDER_MYSQL}://{LOCAL_DB_USER if DEBUG else DB_USER}:{LOCAL_DB_PASS if DEBUG else DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_DB}"
 
     UPLOAD_DIR: str = os.path.join(Path(""), "uploads")
 
@@ -50,7 +57,7 @@ class Settings(BaseSettings):
 
     DEFAULT_FAILED_ATTEMPT_TIMEOUT: timedelta = timedelta(minutes=5)
 
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 2))
+    # ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 2))
 
     SESSION_COOKIE_KEY: str = os.environ.get("SESSION_COOKIE_KEY", "x-smat-session")
 
