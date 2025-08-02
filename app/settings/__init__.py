@@ -21,13 +21,15 @@ class Settings(BaseSettings):
     # FrontEnd Application
     FRONTEND_HOST: str = os.environ.get("FRONTEND_HOST", "http://localhost:3000")
 
+    # CORS Origins
     ORIGINS: list[str] = (
         [
             "http://localhost:3000",
-            "http://localhost:3001",
+            "http://localhost:3001"
         ] if DEBUG else [
             "https://frontend.nuraloom.xyz",
             "https://annoor.nuraloom.xyz",
+            "https://annoor.nuraloom.xyz"
         ]
     )
 
@@ -55,7 +57,6 @@ class Settings(BaseSettings):
         f"{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
 
-
     UPLOAD_DIR: str = os.path.join(Path(""), "uploads")
 
     # JWT Config
@@ -72,9 +73,8 @@ class Settings(BaseSettings):
     PROFILE_PICTURE_UPLOAD_DIR: str = os.path.join(UPLOAD_DIR, "profiles")
 
     # COOKIE SETTINGS
-    FRONTEND_COOKIE_DOMAIN:str = ("localhost" if DEBUG else "nuraloom.xyz")
-    FRONTEND_ACCESS_COOKIE_KEY:str = "access_token"
-
+    FRONTEND_COOKIE_DOMAIN: str = ("localhost" if DEBUG else "nuraloom.xyz")
+    FRONTEND_ACCESS_COOKIE_KEY: str = "access_token"
 
     class Config:
         case_sensitive = True
