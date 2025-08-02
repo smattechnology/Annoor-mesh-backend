@@ -15,21 +15,20 @@ load_dotenv(dotenv_path=env_path)
 class Settings(BaseSettings):
     # App
     APP_NAME: str = os.environ.get("APP_NAME", "FastAPI")
-    DEBUG: bool = bool(os.environ.get("DEBUG", False))
     API_V1_STR: str = "/api/v1"
+    DEBUG: bool = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
     # FrontEnd Application
     FRONTEND_HOST: str = os.environ.get("FRONTEND_HOST", "http://localhost:3000")
 
-    # CORS Origins
+
     ORIGINS: list[str] = (
         [
             "http://localhost:3000",
-            "http://localhost:3001"
+            "http://localhost:3001",
         ] if DEBUG else [
             "https://frontend.nuraloom.xyz",
             "https://annoor.nuraloom.xyz",
-            "https://annoor.nuraloom.xyz"
         ]
     )
 
