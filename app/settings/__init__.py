@@ -32,21 +32,29 @@ class Settings(BaseSettings):
     )
 
     # Database Config
-    DB_HOST: str = os.environ.get("DB_HOST", 'localhost')
+    DB_HOST: str = os.getenv("DB_HOST", "localhost")
+    DB_PORT: int = int(os.getenv("DB_PORT", 3306))
+    DB_NAME: str = os.getenv("DB_DB", "annoor_mesh")
 
-    DB_USER: str = os.environ.get("DB_USER", 'db_admin')
-    DB_PASS: str = os.environ.get("DB_PASS", 'TechNebula_2025')
+    # Credentials
+    DB_USER: str = os.getenv("DB_USER", "db_admin")
+    DB_PASS: str = os.getenv("DB_PASS", "TechNebula_2025")
 
-    LOCAL_DB_USER: str = os.environ.get("DB_USER", 'root')
-    LOCAL_DB_PASS: str = os.environ.get("DB_PASS", 'Admin_1234')
+    LOCAL_DB_USER: str = os.getenv("LOCAL_DB_USER", "root")
+    LOCAL_DB_PASS: str = os.getenv("LOCAL_DB_PASS", "Admin_1234")
 
-    DB_PORT: int = int(os.environ.get("DB_PORT", 3306))
-    DB_DB: str = os.environ.get("DB_DB", 'annoor_mesh')
+    # Providers
+    DB_PROVIDER_MYSQL: str = os.getenv("DB_PROVIDER_MYSQL", "mysql+pymysql")
+    DB_PROVIDER_POSTGRES: str = os.getenv("DB_PROVIDER_POSTGRES", "postgresql+psycopg")
 
-    DB_PROVIDER_MYSQL: str = os.environ.get("DP_PROVIDER_MYSQL", "mysql+pymysql")
-    DB_PROVIDER_POSTGRES: str = os.environ.get("DP_PROVIDER_MYSQL", "postgresql+psycopg")
+    # Final database URI
+    DATABASE_URI: str = (
+        f"{DB_PROVIDER_MYSQL}://"
+        f"{LOCAL_DB_USER if DEBUG else DB_USER}:"
+        f"{LOCAL_DB_PASS if DEBUG else DB_PASS}@"
+        f"{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
-    DATABASE_URI: str = f"{DB_PROVIDER_MYSQL}://{LOCAL_DB_USER if DEBUG else DB_USER}:{LOCAL_DB_PASS if DEBUG else DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_DB}"
 
     UPLOAD_DIR: str = os.path.join(Path(""), "uploads")
 
