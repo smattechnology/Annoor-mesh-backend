@@ -10,6 +10,7 @@ app = FastAPI()
 
 # Allow requests from your frontend
 
+print(settings.ORIGINS)
 
 app.add_middleware(
     CORSMiddleware,
