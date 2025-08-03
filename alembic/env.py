@@ -29,6 +29,7 @@ target_metadata = Base.metadata
 # models imports
 from app.auth.models import *
 from app.mess.models import *
+from app.products.models import *
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

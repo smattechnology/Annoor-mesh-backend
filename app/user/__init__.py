@@ -1,25 +1,30 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, status
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, desc, asc, and_, func
 
 from app.auth import StatusEnum
 from app.auth.models import User, Info, Email
 from app.database import get_db
+from app.dependencies import Admin
+from app.user.schemas import UpdateUserSchema
+from app.utils import NameParser
 
 router = APIRouter()
 
+
 @router.get("/all")
 async def get_users(
-    search: Optional[str] = Query(None, description="Search term for username, name or email"),
-    limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
-    skip: int = Query(0, ge=0, description="Number of items to skip"),
-    sort_by: Optional[str] = Query("created_at", description="Field to sort by"),
-    sort_order: Optional[str] = Query("desc", description="Sort order (asc/desc)"),
-    role: Optional[str] = Query(None, description="Filter by role"),
-    status: Optional[str] = Query(None, description="Filter by status"),
-    db: Session = Depends(get_db)
+        search: Optional[str] = Query(None, description="Search term for username, name or email"),
+        limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
+        skip: int = Query(0, ge=0, description="Number of items to skip"),
+        sort_by: Optional[str] = Query("created_at", description="Field to sort by"),
+        sort_order: Optional[str] = Query("desc", description="Sort order (asc/desc)"),
+        role: Optional[str] = Query(None, description="Filter by role"),
+        status: Optional[str] = Query(None, description="Filter by status"),
+        db: Session = Depends(get_db)
 ):
     # Base query with joins
     query = db.query(User).join(User.info).outerjoin(User.emails).options(joinedload(User.info))
@@ -63,3 +68,77 @@ async def get_users(
         "limit": limit,
         "users": [user.as_dict() for user in users]
     }
+
+
+@router.post("/update")
+async def update_user(
+    data: UpdateUserSchema,
+    admin: User = Depends(Admin),
+    db: Session = Depends(get_db)
+):
+    try:
+        if not data.id:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="User ID not present in payload"
+            )
+
+        user: User = db.query(User).filter(User.id == data.id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        if not user.info:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User info not found"
+            )
+
+        if data.name:
+            name_parser = NameParser(data.name)
+            user.info.name = name_parser.get_full_name()
+            user.info.firstName = name_parser.get_first_name()
+            user.info.middleName = name_parser.get_middle_name()
+            user.info.lastName = name_parser.get_last_name()
+
+        if data.email:
+            active_email = user.active_email()
+            if active_email:
+                active_email.status = StatusEnum.DISABLED
+            new_email = Email(
+                user_id=user.id,
+                email=data.email
+            )
+            db.add(new_email)
+
+        if data.dob:
+            user.info.dob = data.dob
+
+        if data.address:
+            user.info.address = data.address
+
+        if data.role:
+            user.role = data.role
+
+        if data.status:
+            user.status = data.status
+
+        db.commit()
+        db.refresh(user)
+
+        return user.as_dict()
+
+    except SQLAlchemyError as db_err:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error occurred: {str(db_err)}"
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error: {str(e)}"
+        )

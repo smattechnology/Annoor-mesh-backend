@@ -53,6 +53,7 @@ class User(Base):
             "name":self.info.name,
             "role": self.role.value if self.role else None,
             "status": self.status.value if self.status else None,
+            "dob": self.info.dob.isoformat() if self.info and self.info.dob else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
