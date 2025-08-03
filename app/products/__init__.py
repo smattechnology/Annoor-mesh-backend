@@ -127,15 +127,15 @@ async def add_product(data: ProductSchema, admin: User = Depends(Admin), db: Ses
     return new_product.as_dict()
 
 
-@get.get("/all")
-async def get_all_product(admin: User = Depends(Admin),
-                          search: Optional[str] = Query(None, description="Search term for username, name or email"),
-                          limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
-                          skip: int = Query(0, ge=0, description="Number of items to skip"),
-                          sort_by: Optional[str] = Query("created_at", description="Field to sort by"),
-                          sort_order: Optional[str] = Query("desc", description="Sort order (asc/desc)"),
-                          role: Optional[str] = Query(None, description="Filter by role"),
-                          status: Optional[str] = Query(None, description="Filter by status"),
-                          db: Session = Depends(get_db)
-                          ):
-    query = db.query(Product).join(Product.category).outerjoin(Product.unite).options(joinedload(Product.category))
+# @get.get("/all")
+# async def get_all_product(admin: User = Depends(Admin),
+#                           search: Optional[str] = Query(None, description="Search term for username, name or email"),
+#                           limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
+#                           skip: int = Query(0, ge=0, description="Number of items to skip"),
+#                           sort_by: Optional[str] = Query("created_at", description="Field to sort by"),
+#                           sort_order: Optional[str] = Query("desc", description="Sort order (asc/desc)"),
+#                           role: Optional[str] = Query(None, description="Filter by role"),
+#                           status: Optional[str] = Query(None, description="Filter by status"),
+#                           db: Session = Depends(get_db)
+#                           ):
+#     query = db.query(Product).join(Product.category).outerjoin(Product.unite).options(joinedload(Product.category))
