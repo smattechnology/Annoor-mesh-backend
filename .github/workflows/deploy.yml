@@ -26,4 +26,7 @@ jobs:
             git pull origin main
             source ./.venv/bin/activate
             pip install -r requirements.txt
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            alembic revision --autogenerate -m "$COMMIT_MSG"
+            alembic upgrade head
             sudo systemctl restart annoor_mesh_backend.service
