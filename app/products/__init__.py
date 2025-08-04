@@ -24,18 +24,17 @@ async def add_category(
         db: Session = Depends(get_db)
 ):
     # Check if category already exists
-    existing_category = db.query(Category).filter_by(value=data.value).first()
+    existing_category = db.query(Category).filter_by(label=data.label).first()
     if existing_category:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Category with value '{data.value}' already exists."
+            detail=f"Category with value '{data.label}' already exists."
         )
 
     # Attempt to create and save new category
     try:
         new_category = Category(
             id=str(uuid.uuid4()),
-            value=data.value,
             label=data.label,
             icon=data.icon
         )
@@ -59,17 +58,16 @@ async def add_unite(
         db: Session = Depends(get_db)
 ):
     # Check if unite already exists
-    existing_unite = db.query(Unite).filter_by(value=data.value).first()
+    existing_unite = db.query(Unite).filter_by(label=data.label).first()
     if existing_unite:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unite with value '{data.value}' already exists."
+            detail=f"Unite with value '{data.label}' already exists."
         )
 
     try:
         new_unite = Unite(
             id=str(uuid.uuid4()),
-            value=data.value,
             label=data.label,
             icon=data.icon
         )

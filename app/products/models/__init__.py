@@ -8,7 +8,6 @@ class Category(Base):
     __tablename__ = "categories"
 
     id = Column(String(255), primary_key=True, index=True)
-    value = Column(String(255), nullable=False)
     label = Column(String(255), nullable=False)
     icon = Column(String(255), nullable=True)
 
@@ -20,7 +19,6 @@ class Category(Base):
     def as_dict(self):
         return {
             "id": self.id,
-            "value": self.value,
             "label": self.label,
             "icon": self.icon,
             "created_at": self.created_at.isoformat() if self.created_at else None,
@@ -32,7 +30,6 @@ class Unite(Base):
     __tablename__ = "unites"
 
     id = Column(String(255), primary_key=True, index=True)
-    value = Column(String(255), nullable=False)
     label = Column(String(255), nullable=False)
     icon = Column(String(255), nullable=True)
 
@@ -44,7 +41,6 @@ class Unite(Base):
     def as_dict(self):
         return {
             "id": self.id,
-            "value": self.value,
             "label": self.label,
             "icon": self.icon,
             "created_at": self.created_at.isoformat() if self.created_at else None,

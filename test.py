@@ -2,6 +2,8 @@ from time import sleep
 
 import requests
 
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTQyOTIwMzZ9.yawx3RlnF8VwmeWuNIfC8o5r_qRToHhdSVkgHbhumOw"
+
 
 def get_all_user():
     url = 'https://dummyjson.com/users?limit=100'
@@ -84,7 +86,6 @@ def upload_category():
 
 def upload_unite():
     post_url = "http://localhost:1024/product/add/unite"
-    access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTQyMzY4OTh9.U3BPBnw-0ymSDLww4WLKxkQrsDUcO1tORDPnc3tGQ_8"
 
     cookies = {
         "access_token": access_token

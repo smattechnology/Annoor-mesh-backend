@@ -8,7 +8,7 @@ from app.auth.models import StatusEnum
 
 
 class UpdateUserSchema(BaseModel):
-    id:str
+    id: str
     email: Optional[EmailStr] = None
     role: Optional[RoleEnum] = None
     status: Optional[StatusEnum] = None
@@ -17,4 +17,4 @@ class UpdateUserSchema(BaseModel):
     address: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

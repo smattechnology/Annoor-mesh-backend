@@ -8,7 +8,7 @@ from app.mess import router as messRouter
 from app.products import add as productAddRouter,get as productGetRouter
 
 app = FastAPI()
-print(settings.ORIGINS)
+
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,

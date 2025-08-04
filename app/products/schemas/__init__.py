@@ -4,12 +4,10 @@ from pydantic import BaseModel
 
 
 class CategorySchema(BaseModel):
-    value: str
     label: str
     icon: Optional[str] = None
 
 class UniteSchema(BaseModel):
-    value: str
     label: str
     icon: Optional[str] = None
 
