@@ -71,8 +71,8 @@ class Product(Base):
             "name": self.name,
             "price": self.price,
             "description": self.description,
-            "category_id": self.category_id,
-            "unit_id": self.unit_id,
+            "category": self.category.as_dict(),
+            "unit": self.unite.as_dict(),
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }

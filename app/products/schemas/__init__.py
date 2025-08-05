@@ -7,13 +7,15 @@ class CategorySchema(BaseModel):
     label: str
     icon: Optional[str] = None
 
+
 class UniteSchema(BaseModel):
     label: str
     icon: Optional[str] = None
 
+
 class ProductSchema(BaseModel):
-    name:str
-    price:str
-    unite_id:str
-    category_id:str
-    description:Optional[str] = None
+    name: str
+    price: str
+    unite_id: str
+    category_id: str
+    description: Optional[str] = None

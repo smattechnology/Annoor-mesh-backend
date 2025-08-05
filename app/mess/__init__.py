@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from app.mess.models import Mess
+from app.mess.models import Mess, MessAddress, MessOwner
 from app.database import get_db
 from app.mess.schemas import MessSchema
 from sqlalchemy import or_, desc, asc
@@ -11,7 +11,7 @@ from sqlalchemy import or_, desc, asc
 router = APIRouter()
 
 
-@router.post("/add")
+@router.post("/add",status_code=201)
 async def add_mess(data: MessSchema, db: Session = Depends(get_db)):
     if not all([data.name, data.address]):
         raise HTTPException(
@@ -19,40 +19,68 @@ async def add_mess(data: MessSchema, db: Session = Depends(get_db)):
             detail="All fields (Name, Address) are required."
         )
 
-    existing_mess = db.query(Mess).filter(
+    # Check if mess with same name and address exists
+    existing_mess = db.query(Mess).join(MessAddress).filter(
         Mess.name == data.name,
-        Mess.address == data.address
+        MessAddress.street == data.address.street,
+        MessAddress.area == data.address.area,
+        MessAddress.city == data.address.city,
+        MessAddress.postalCode == data.address.postalCode
     ).first()
 
     if existing_mess:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mess already exists."
+            detail="Mess already exists at this address."
         )
 
-    new_mess = Mess(
-        id=str(uuid.uuid4()),
-        name=data.name,
-        address=data.address,
-        phone=data.phone or None
+    # Create new entries
+    mess_id = str(uuid.uuid4())
+    owner_id = str(uuid.uuid4())
+    address_id = str(uuid.uuid4())
+
+    new_owner = MessOwner(
+        id=owner_id,
+        name=data.owner.name,
+        phone=data.owner.phone,
     )
 
+    new_address = MessAddress(
+        id=address_id,
+        street=data.address.street,
+        area=data.address.area,
+        city=data.address.city,
+        postalCode=data.address.postalCode,
+    )
+
+    new_mess = Mess(
+        id=mess_id,
+        name=data.name,
+        phone=data.phone,
+        address_id=address_id,
+        owner_id=owner_id,
+        type=data.type,
+    )
+
+    db.add(new_owner)
+    db.add(new_address)
     db.add(new_mess)
     db.commit()
     db.refresh(new_mess)
 
-    return {"status": "Successfully added"}
+    return {"status": "Successfully added", "data": new_mess.as_dict()}
+
 
 
 @router.get("/all")
 async def get_users(
-    search: Optional[str] = Query(None, description="Search term for name, address or phone"),
-    limit: int = Query(10, gt=0, le=100),
-    skip: int = Query(0, ge=0),
-    sort_by: Optional[str] = Query("created_at"),
-    sort_order: Optional[str] = Query("desc"),
-    status: Optional[str] = Query(None),
-    db: Session = Depends(get_db)
+        search: Optional[str] = Query(None, description="Search term for name, address or phone"),
+        limit: int = Query(10, gt=0, le=100),
+        skip: int = Query(0, ge=0),
+        sort_by: Optional[str] = Query("created_at"),
+        sort_order: Optional[str] = Query("desc"),
+        status: Optional[str] = Query(None),
+        db: Session = Depends(get_db)
 ):
     query = db.query(Mess)
 

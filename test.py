@@ -2,7 +2,7 @@ from time import sleep
 
 import requests
 
-access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTQyOTIwMzZ9.yawx3RlnF8VwmeWuNIfC8o5r_qRToHhdSVkgHbhumOw"
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTQzMDczNzJ9.gmPtsMwch1IU6JxhKaMUKaRU67oCm_QLijVhngRJYOQ"
 
 
 def get_all_user():
@@ -65,7 +65,7 @@ def upload_category():
     with requests.Session() as session:
         for i, category in enumerate(categories, 1):
             try:
-                response = session.post(post_url, json=category,cookies=cookies)
+                response = session.post(post_url, json=category, cookies=cookies)
                 if response.status_code == 201:
                     print(f"[{i}/{len(categories)}] ✅ Uploaded: {category['label']}")
                     success_count += 1
@@ -83,6 +83,7 @@ def upload_category():
     print("\nUpload Summary:")
     print(f"✅ Success: {success_count}")
     print(f"❌ Failed: {fail_count}")
+
 
 def upload_unite():
     post_url = "http://localhost:1024/product/add/unite"
@@ -127,5 +128,143 @@ def upload_unite():
     print(f"✅ Success: {success_count}")
     print(f"❌ Failed: {fail_count}")
 
+
+def upload_product():
+    post_url = "http://localhost:1024/product/add/"
+
+    cookies = {
+        "access_token": access_token
+    }
+
+    products = [
+        {
+            "name": "সয়াবিন তেল",
+            "price": 100,
+            "unite": None,
+            "bld": {
+                "breakfast": False,
+                "lunch": False,
+                "dinner": False,
+                "editable": False,
+            },
+        },
+        {
+            "name": "সরিষার তেল",
+            "price": 80,
+            "unite": "লিটার",
+            "bld": {
+                "breakfast": False,
+                "lunch": True,
+                "dinner": False,
+                "editable": True,
+            },
+        },
+        {
+            "name": "পাম তেল",
+            "price": 90,
+            "unite": "লিটার",
+            "bld": {
+                "breakfast": True,
+                "lunch": True,
+                "dinner": False,
+                "editable": False,
+            },
+        },
+        {
+            "name": "কোকোনাট তেল",
+            "price": 120,
+            "unite": "লিটার",
+            "bld": {
+                "breakfast": False,
+                "lunch": False,
+                "dinner": True,
+                "editable": True,
+            },
+        },
+        {
+            "name": "ঘি",
+            "price": 200,
+            "unite": "লিটার",
+            "bld": {
+                "breakfast": True,
+                "lunch": False,
+                "dinner": False,
+                "editable": True,
+            },
+        },
+        {
+            "name": "বাটার",
+            "price": 150,
+            "unite": "লিটার",
+            "bld": {
+                "breakfast": False,
+                "lunch": True,
+                "dinner": True,
+                "editable": False,
+            },
+        },
+        {
+            "name": "চিনি",
+            "price": 50,
+            "unite": "কেজি",
+            "bld": {
+                "breakfast": True,
+                "lunch": True,
+                "dinner": True,
+                "editable": True,
+            },
+        },
+        {
+            "name": "লবণ",
+            "price": 20,
+            "unite": "কেজি",
+            "bld": {
+                "breakfast": False,
+                "lunch": False,
+                "dinner": False,
+                "editable": False,
+            },
+        },
+    ]
+
+    category_id = "0a5bf0e4-0cb5-459c-88ca-4c9662bdc9fc"
+    unite_id = "4bfdca59-59eb-478a-88ff-d36062ea1176"  # replace with real dynamic match if needed
+
+    success_count = 0
+    fail_count = 0
+
+    with requests.Session() as session:
+        for i, product in enumerate(products, 1):
+            payload = {
+                "name": product.get("name"),
+                "price": str(product.get("price")),
+                "unite_id": unite_id,
+                "category_id": category_id,
+            }
+
+            try:
+                response = session.post(post_url, json=payload, cookies=cookies)
+
+                if response.status_code == 201:
+                    print(f"[{i}/{len(products)}] ✅ Uploaded: {product['name']}")
+                    success_count += 1
+                elif response.status_code == 400 and "already exists" in response.text:
+                    print(f"[{i}/{len(products)}] ⚠️ Already exists: {product['name']}")
+                else:
+                    print(f"[{i}/{len(products)}] ❌ Failed: {product['name']}, Status: {response.status_code}")
+                    print(f"   → Error: {response.text}")
+                    fail_count += 1
+
+                sleep(0.2)
+
+            except requests.exceptions.RequestException as e:
+                print(f"[{i}/{len(products)}] ❗ Exception for {product['name']}: {e}")
+                fail_count += 1
+
+    print("\nUpload Summary:")
+    print(f"✅ Success: {success_count}")
+    print(f"❌ Failed: {fail_count}")
+
+
 if __name__ == '__main__':
-    upload_unite()
+    upload_product()

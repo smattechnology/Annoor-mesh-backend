@@ -3,9 +3,10 @@ from time import sleep
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, or_
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session, Query, joinedload
+from sqlalchemy.orm import Session, joinedload
 
 from app.auth import User
 from app.database import get_db
@@ -98,10 +99,42 @@ async def get_all_unite(admin: User = Depends(Admin),
     return [unite.as_dict() for unite in unites]
 
 
+@get.get("/search")
+async def get_search_product(
+        q: Optional[str] = Query(None, description="Search term for product name"),
+        admin: User = Depends(Admin),
+        db: Session = Depends(get_db)
+):
+    """
+    Search for products by name (case-insensitive).
+
+    - **q**: Search query string.
+    - Requires Admin authentication.
+    """
+    try:
+        query = db.query(Product)
+
+        if q:
+            query = query.filter(Product.name.ilike(f"%{q.strip()}%"))
+
+        products = query.all()
+
+        if not products:
+            return []  # or raise 404 if you prefer
+
+        return [product.as_dict() for product in products]
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while searching for products."
+        )
+
+
 @add.post("/", status_code=201)
 async def add_product(data: ProductSchema, admin: User = Depends(Admin), db: Session = Depends(get_db)):
-    existing_product = db.query(Product).filter(Product.name == data.name, Product.unite_id == data.category_id,
-                                                Product.unite_id == data.unite_id).first()
+    existing_product = db.query(Product).filter(Product.name == data.name, Product.unit_id == data.category_id,
+                                                Product.unit_id == data.unite_id).first()
 
     if existing_product:
         raise HTTPException(
@@ -115,7 +148,7 @@ async def add_product(data: ProductSchema, admin: User = Depends(Admin), db: Ses
         price=data.price,
         description=(data.description if data.description else None),
         category_id=data.category_id,
-        unite_id=data.unite_id
+        unit_id=data.unite_id
     )
 
     db.add(new_product)
@@ -125,15 +158,32 @@ async def add_product(data: ProductSchema, admin: User = Depends(Admin), db: Ses
     return new_product.as_dict()
 
 
-# @get.get("/all")
-# async def get_all_product(admin: User = Depends(Admin),
-#                           search: Optional[str] = Query(None, description="Search term for username, name or email"),
-#                           limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
-#                           skip: int = Query(0, ge=0, description="Number of items to skip"),
-#                           sort_by: Optional[str] = Query("created_at", description="Field to sort by"),
-#                           sort_order: Optional[str] = Query("desc", description="Sort order (asc/desc)"),
-#                           role: Optional[str] = Query(None, description="Filter by role"),
-#                           status: Optional[str] = Query(None, description="Filter by status"),
-#                           db: Session = Depends(get_db)
-#                           ):
-#     query = db.query(Product).join(Product.category).outerjoin(Product.unite).options(joinedload(Product.category))
+@get.get("/all")
+async def get_all_product(admin: User = Depends(Admin),
+                          search: Optional[str] = Query(None, description="Search term for username, name or email"),
+                          limit: int = Query(10, gt=0, le=100, description="Number of items per page"),
+                          skip: int = Query(0, ge=0, description="Number of items to skip"),
+                          db: Session = Depends(get_db)
+                          ):
+    query = db.query(Product).join(Product.category).outerjoin(Product.unite).options(joinedload(Product.category))
+
+    if search:
+        query = query.filter(
+
+            or_(
+                Product.id.ilike(f"%{search}%"),
+                Product.name.ilike(f"%{search}%"),
+                Category.label.ilike(f"%{search}%"),
+            ),
+
+        )
+    total = query.distinct(Product.id).count()
+
+    products = query.distinct(Product.id).offset(skip).limit(limit).all()
+
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "products": [product.as_dict() for product in products]
+    }
