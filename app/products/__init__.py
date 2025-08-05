@@ -8,7 +8,7 @@ from sqlalchemy import and_, or_
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, joinedload
 
-from app.auth import User
+from app.auth import User, StatusEnum
 from app.database import get_db
 from app.dependencies import Admin
 from app.products.models import Category, Unite, Product
@@ -187,3 +187,10 @@ async def get_all_product(admin: User = Depends(Admin),
         "limit": limit,
         "products": [product.as_dict() for product in products]
     }
+
+
+@get.get("/by_category")
+async def get_products_by_category(db: Session = Depends(get_db)):
+    categories = db.query(Category).all()
+
+    return [category.as_category() for category in categories] if categories else []

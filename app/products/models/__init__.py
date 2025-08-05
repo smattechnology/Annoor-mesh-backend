@@ -16,27 +16,15 @@ class Category(Base):
 
     products = relationship("Product", back_populates="category", cascade="all, delete")
 
-    def as_dict(self):
+    def as_category(self):
         return {
             "id": self.id,
             "label": self.label,
             "icon": self.icon,
+            "products": [product.as_dict() for product in self.products] if self.products else [],
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
-
-
-class Unite(Base):
-    __tablename__ = "unites"
-
-    id = Column(String(255), primary_key=True, index=True)
-    label = Column(String(255), nullable=False)
-    icon = Column(String(255), nullable=True)
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    products = relationship("Product", back_populates="unite", cascade="all, delete")
 
     def as_dict(self):
         return {
@@ -65,6 +53,17 @@ class Product(Base):
     category = relationship("Category", back_populates="products")
     unite = relationship("Unite", back_populates="products")
 
+    def to_category(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "unit":self.unite.as_dict(),
+            "description": self.description,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
+
     def as_dict(self):
         return {
             "id": self.id,
@@ -73,6 +72,28 @@ class Product(Base):
             "description": self.description,
             "category": self.category.as_dict(),
             "unit": self.unite.as_dict(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class Unite(Base):
+    __tablename__ = "unites"
+
+    id = Column(String(255), primary_key=True, index=True)
+    label = Column(String(255), nullable=False)
+    icon = Column(String(255), nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    products = relationship("Product", back_populates="unite", cascade="all, delete")
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "label": self.label,
+            "icon": self.icon,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
