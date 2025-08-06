@@ -15,7 +15,7 @@ class UniteSchema(BaseModel):
 
 class ProductSchema(BaseModel):
     name: str
-    price: str
+    price: int
     unite_id: str
     category_id: str
     description: Optional[str] = None

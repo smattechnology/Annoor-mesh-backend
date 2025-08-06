@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, ForeignKey, DateTime
+from sqlalchemy import Column, String, ForeignKey, DateTime, Integer
 from sqlalchemy.orm import relationship
 from app.database.base import Base
 
@@ -41,7 +41,7 @@ class Product(Base):
 
     id = Column(String(255), primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    price = Column(String(255), nullable=False)
+    price = Column(Integer, nullable=False)
     description = Column(String(255), nullable=True)
 
     category_id = Column(String(255), ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
