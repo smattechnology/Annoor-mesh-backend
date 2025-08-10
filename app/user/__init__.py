@@ -9,6 +9,7 @@ from app.auth import StatusEnum
 from app.auth.models import User, Info, Email
 from app.database import get_db
 from app.dependencies import Admin
+from app.mess import Mess
 from app.user.schemas import UpdateUserSchema
 from app.utils import NameParser
 
@@ -61,7 +62,6 @@ async def get_users(
     total = query.distinct(User.id).count()
 
     users = query.distinct(User.id).offset(skip).limit(limit).all()
-
     return {
         "total": total,
         "skip": skip,
@@ -72,9 +72,9 @@ async def get_users(
 
 @router.post("/update")
 async def update_user(
-    data: UpdateUserSchema,
-    admin: User = Depends(Admin),
-    db: Session = Depends(get_db)
+        data: UpdateUserSchema,
+        admin: User = Depends(Admin),
+        db: Session = Depends(get_db)
 ):
     try:
         if not data.id:
@@ -142,3 +142,31 @@ async def update_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unexpected error: {str(e)}"
         )
+
+
+@router.post("/update/mess")
+async def update_mess(user_id: str, mess_id: str, admin: User = Depends(Admin),
+                      db: Session = Depends(get_db)):
+
+    if not user_id and not mess_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User ID and Mess ID are's not present in payload"
+        )
+
+    user:User = db.query(User).filter(User.id == user_id).first()
+
+    mess = db.query(Mess).filter(Mess.id == mess_id).first()
+
+    if not user and not mess:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="User and Mess are's not present in server"
+        )
+
+    user.allocated_mess_id = mess_id
+
+    db.commit()
+    db.refresh(user)
+
+    return user.as_dict()

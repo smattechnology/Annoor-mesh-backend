@@ -3,15 +3,15 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from app.mess.models import Mess, MessAddress, MessOwner
+from app.mess.models import Mess, MessAddress, MessOwner, StatusEnum
 from app.database import get_db
 from app.mess.schemas import MessSchema
-from sqlalchemy import or_, desc, asc
+from sqlalchemy import or_, desc, asc, and_
 
 router = APIRouter()
 
 
-@router.post("/add",status_code=201)
+@router.post("/add", status_code=201)
 async def add_mess(data: MessSchema, db: Session = Depends(get_db)):
     if not all([data.name, data.address]):
         raise HTTPException(
@@ -71,7 +71,6 @@ async def add_mess(data: MessSchema, db: Session = Depends(get_db)):
     return {"status": "Successfully added", "data": new_mess.as_dict()}
 
 
-
 @router.get("/all")
 async def get_users(
         search: Optional[str] = Query(None, description="Search term for name, address or phone"),
@@ -111,5 +110,29 @@ async def get_users(
         "total": total,
         "skip": skip,
         "limit": limit,
+        "messes": [mess.as_dict() for mess in messes]
+    }
+
+
+@router.get("/search")
+async def get_mess_search(q: Optional[str] = Query(None, description="Search term for name, address or phone"),
+                          db: Session = Depends(get_db)):
+    query = db.query(Mess)
+
+    if q:
+        query = query.filter(
+            and_(
+                or_(
+                    Mess.id.ilike(f"%{q}%"),
+                    Mess.name.ilike(f"%{q}%"),
+                    Mess.phone.ilike(f"%{q}%"),
+                ),
+                Mess.status == StatusEnum.ACTIVE
+            )
+        )
+
+    messes = query.all()
+
+    return {
         "messes": [mess.as_dict() for mess in messes]
     }

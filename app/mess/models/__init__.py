@@ -42,6 +42,7 @@ class Mess(Base):
 
     address = relationship("MessAddress", back_populates="mess", uselist=False)
     mess_owner = relationship("MessOwner", back_populates="mess", uselist=False)
+    users = relationship("User", back_populates="mess")
 
     def as_dict(self):
         return {
