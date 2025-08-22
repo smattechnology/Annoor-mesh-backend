@@ -15,7 +15,7 @@ def is_email(value: str) -> bool:
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
 
-    expire = datetime.datetime.now(datetime.UTC) + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.datetime.now(datetime.UTC) + (expires_delta or timedelta(days=30))
     to_encode.update({"exp": expire})
 
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)

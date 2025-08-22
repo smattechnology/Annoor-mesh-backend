@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     # JWT Config
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "8deadce9449770680910741063cd0a3fe0acb62a8978661f421bbcbb66dc41f1")
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # 1 hour
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60*24*30  # 30 days
 
     DEFAULT_FAILED_ATTEMPT_TIMEOUT: timedelta = timedelta(minutes=5)
 

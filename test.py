@@ -8,7 +8,7 @@ PRO_URL = "https://api.nuraloom.xyz"
 BASE_URL = DEV_URL
 
 PRO_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDc5MDg5Ny1kYTk5LTQ2NGQtOTljMy0wNmYyMWUxOTBjNzkiLCJleHAiOjE3NTQzOTQ5MzZ9.NyJUmjiO8ATe5llAswc7wPKl7-waacpPYJHPY6N4j1E"
-DEV_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTQzOTc5ODV9.p9QNJyKgQQIHRotUai3tVUHTZJFlEDjbVWt6P4Fh6uo"
+DEV_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTg0NTE4Mjd9.DGFgRRuqPiOEPrsp6pvcOi2TRm9G2P6K8Wa4MAIIK5A"
 ACCESS_TOKEN = DEV_ACCESS_TOKEN
 
 # UNITS = [
@@ -517,6 +517,7 @@ def get_all_category():
         except requests.exceptions.RequestException as e:
             print(e)
 
+
 def get_all_unite():
     get_url = f"{BASE_URL}/product/get/unite/all"
     cookies = {
@@ -688,7 +689,7 @@ def upload_product():
     success_count = 0
     fail_count = 0
 
-    UNITS  = get_all_unite()
+    UNITS = get_all_unite()
     CATEGORIES = get_all_category()
 
     with requests.Session() as session:
@@ -718,10 +719,16 @@ def upload_product():
 
                 unite_id = matched_unit["id"]
 
+                unit_list = [
+                    {
+                        "unit_id": unite_id,
+                        "price": str(product.get("price")),
+                        "is_generic": True
+                    }
+                ]
                 payload = {
                     "name": product.get("name"),
-                    "price": str(product.get("price")),
-                    "unite_id": unite_id,
+                    "units": unit_list,
                     "category_id": category_id,
                 }
 

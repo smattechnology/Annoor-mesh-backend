@@ -65,9 +65,10 @@ class OrderItem(Base):
 
     order_id = Column(String(255), ForeignKey("orders.id"))
     product_id = Column(String(255), ForeignKey("products.id"))
+    unit_id = Column(String(255), ForeignKey("items_unit.id"))
 
-    current_price = Column(Integer, nullable=False)
-    price = Column(Integer, nullable=False)
+    auto = Column(Boolean,default=True,nullable=False)
+    quantity= Column(Integer,default=0,nullable=False)
 
     for_breakfast = Column(Boolean, nullable=False, default=False)
     for_lunch = Column(Boolean, nullable=False, default=False)
@@ -81,8 +82,9 @@ class OrderItem(Base):
             "id": self.id,
             "order_id": self.order_id,
             "product_id": self.product_id,
-            "current_price": self.current_price,
-            "price": self.price,
+            "unit_id": self.unit_id,
+            "quantity": self.quantity,
+            "auto": self.auto,
             "for_breakfast": self.for_breakfast,
             "for_lunch": self.for_lunch,
             "for_dinner": self.for_dinner,

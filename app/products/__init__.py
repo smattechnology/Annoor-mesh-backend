@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.auth import User, StatusEnum
 from app.database import get_db
 from app.dependencies import Admin
-from app.products.models import Category, Unite, Product
+from app.products.models import Category, Unite, Product, ItemUnit
 from app.products.schemas import CategorySchema, UniteSchema, ProductSchema
 
 add = APIRouter(prefix="/add")
@@ -89,7 +89,7 @@ async def add_unite(
 async def get_all_category(admin: User = Depends(Admin),
                            db: Session = Depends(get_db)):
     categories = db.query(Category).all()
-    return [category.as_dict() for category in categories]
+    return [category.as_category() for category in categories]
 
 
 @get.get("/unite/all")
@@ -133,27 +133,37 @@ async def get_search_product(
 
 @add.post("/", status_code=201)
 async def add_product(data: ProductSchema, admin: User = Depends(Admin), db: Session = Depends(get_db)):
-    existing_product = db.query(Product).filter(Product.name == data.name, Product.unit_id == data.category_id,
-                                                Product.unit_id == data.unite_id).first()
-
+    existing_product = db.query(Product).filter(Product.name == data.name).first()
     if existing_product:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Product '{data.name}' already exists."
         )
 
+    product_id = str(uuid4())
     new_product = Product(
-        id=str(uuid4()),
+        id=product_id,
         name=data.name,
-        price=data.price,
-        description=(data.description if data.description else None),
+        description=data.description,
         category_id=data.category_id,
-        unit_id=data.unite_id
     )
 
-    db.add(new_product)
-    db.commit()
-    db.refresh(new_product)
+    try:
+        db.add(new_product)
+        for unit in data.units:
+            new_item_unit = ItemUnit(
+                id=str(uuid4()),
+                product_id=product_id,
+                unit_id=unit.unit_id,
+                price=unit.price,
+                is_generic=unit.is_generic
+            )
+            db.add(new_item_unit)
+        db.commit()
+        db.refresh(new_product)
+    except:
+        db.rollback()
+        raise
 
     return new_product.as_dict()
 
@@ -165,7 +175,7 @@ async def get_all_product(admin: User = Depends(Admin),
                           skip: int = Query(0, ge=0, description="Number of items to skip"),
                           db: Session = Depends(get_db)
                           ):
-    query = db.query(Product).join(Product.category).outerjoin(Product.unite).options(joinedload(Product.category))
+    query = db.query(Product).join(Product.category).options(joinedload(Product.category))
 
     if search:
         query = query.filter(

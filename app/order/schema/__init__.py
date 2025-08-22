@@ -1,21 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
 class MealTime(BaseModel):
-    breakfast: Optional[bool] = False
-    lunch: Optional[bool] = False
-    dinner: Optional[bool] = False
+    breakfast: bool = Field(default=False)
+    lunch: bool = Field(default=False)
+    dinner: bool = Field(default=False)
 
 
 class OrderItem(BaseModel):
     product_id: str
-    price: int  # or float, depending on your frontend
+    auto: bool
+    quantity: int = Field(ge=0)  # Non-negative quantity
     bld: MealTime
+    unit_id: Optional[str] = None
 
 
 class OrderPlaceSchema(BaseModel):
+    user_id: str
     mess_id: str
-    meal_budget: int
-    total_meal: int
+    totalMeal: int = Field(gt=0)  # Must be greater than 0
+    budgetPerMeal: int = Field(gt=0)  # Must be greater than 0
     items: List[OrderItem]

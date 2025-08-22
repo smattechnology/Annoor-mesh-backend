@@ -24,8 +24,8 @@ async def place_order(
             id=order_id,
             order_for=data.mess_id,
             order_by=user.id,
-            meal_budget=data.meal_budget,
-            total_meal=data.total_meal,
+            meal_budget=data.budgetPerMeal,
+            total_meal=data.budgetPerMeal,
         )
         db.add(new_order)
 
@@ -39,8 +39,9 @@ async def place_order(
                 id=order_item_id,
                 order_id=order_id,
                 product_id=product.id,
-                current_price=product.price,
-                price=getattr(item, "price", product.price),
+                unit_id=item.unit_id,
+                auto=item.auto,
+                quantity=item.quantity,
                 for_breakfast=getattr(item.bld, "breakfast", False),
                 for_lunch=getattr(item.bld, "lunch", False),
                 for_dinner=getattr(item.bld, "dinner", False)

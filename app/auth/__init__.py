@@ -73,7 +73,7 @@ async def get_login(data: UserLogin, response: Response, db: Session = Depends(g
         # (Optional) You can generate and return a JWT token here
         # Create JWT token
     token_data = {"sub": str(user.id)}  # you can include more data if needed
-    token = create_access_token(data=token_data, expires_delta=timedelta(minutes=60))
+    token = create_access_token(data=token_data, expires_delta=timedelta(days=30))
 
     response.set_cookie(
         key=settings.FRONTEND_ACCESS_COOKIE_KEY,
