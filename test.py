@@ -5,11 +5,11 @@ import requests
 DEV_URL = "http://localhost:1024"
 PRO_URL = "https://api.nuraloom.xyz"
 
-BASE_URL = DEV_URL
+BASE_URL = PRO_URL
 
-PRO_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDc5MDg5Ny1kYTk5LTQ2NGQtOTljMy0wNmYyMWUxOTBjNzkiLCJleHAiOjE3NTQzOTQ5MzZ9.NyJUmjiO8ATe5llAswc7wPKl7-waacpPYJHPY6N4j1E"
+PRO_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDc5MDg5Ny1kYTk5LTQ2NGQtOTljMy0wNmYyMWUxOTBjNzkiLCJleHAiOjE3NTg0ODkyODF9.TiAvhFNmt0a9aplnULEoc8jsTy15ivwc9BcT4_jxgoQ"
 DEV_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNGY4NGE0YS0wZWE4LTQxY2ItOTRhYi0yZGIzNGRhNDE1YzQiLCJleHAiOjE3NTg0NTE4Mjd9.DGFgRRuqPiOEPrsp6pvcOi2TRm9G2P6K8Wa4MAIIK5A"
-ACCESS_TOKEN = DEV_ACCESS_TOKEN
+ACCESS_TOKEN = PRO_ACCESS_TOKEN
 
 # UNITS = [
 #     {
@@ -578,34 +578,50 @@ def upload_category():
     }
     categories = [
         {
-            "value": "oil_spices",
-            "label": "তেল/মশলা (Oil/Spices)",
-            "icon": "🫒"
-        },
-        {
-            "value": "greens",
             "label": "শাক (Leafy Greens)",
-            "icon": "🥬"
+            "icon": "🥬",
+            "rand_select": "STATIC",
+            "min": None,
+            "max": None,
         },
         {
-            "value": "vegetables",
-            "label": "সবজি (Vegetables)",
-            "icon": "🥕"
-        },
-        {
-            "value": "fish",
-            "label": "মাছ (Fish)",
-            "icon": "🐟"
-        },
-        {
-            "value": "meat",
             "label": "মাংস (Meat)",
-            "icon": "🍗"
+            "icon": "🍗",
+            "rand_select": "STATIC",
+            "min": None,
+            "max": None,
+
         },
         {
-            "value": "staples",
+            "label": "মাছ (Fish)",
+            "icon": "🐟",
+            "rand_select": "STATIC",
+            "min": None,
+            "max": None,
+
+        },
+        {
+            "label": "সবজি (Vegetables)",
+            "icon": "🥕",
+            "rand_select": "DYNAMIC",
+            "min": 3,
+            "max": 5,
+
+        },
+        {
             "label": "নিত্যপ্রয়োজনীয় খাদ্যপণ্য (Staples)",
-            "icon": "🛒"
+            "icon": "🛒",
+            "rand_select": "STATIC",
+            "min": None,
+            "max": None,
+
+        },
+        {
+            "label": "তেল/মশলা (Oil/Spices)",
+            "icon": "🫒",
+            "rand_select": "STATIC",
+            "min": None,
+            "max": None,
         }
     ]
 

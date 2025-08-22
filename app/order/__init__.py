@@ -25,7 +25,7 @@ async def place_order(
             order_for=data.mess_id,
             order_by=user.id,
             meal_budget=data.budgetPerMeal,
-            total_meal=data.budgetPerMeal,
+            total_meal=data.totalMeal,
         )
         db.add(new_order)
 
