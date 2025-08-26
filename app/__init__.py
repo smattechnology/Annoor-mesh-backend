@@ -7,6 +7,7 @@ from app.user import router as userRouter
 from app.mess import router as messRouter
 from app.products import add as productAddRouter,get as productGetRouter
 from app.order import add as orderAddRouter
+from app.order import get as orderGetRouter
 
 app = FastAPI()
 
@@ -26,6 +27,7 @@ app.include_router(messRouter, prefix="/mess", tags=["Mess"])
 app.include_router(router=productAddRouter, prefix="/product", tags=["Product"])
 app.include_router(router=productGetRouter, prefix="/product", tags=["Product"])
 app.include_router(router=orderAddRouter, prefix="/order", tags=["Order"])
+app.include_router(router=orderGetRouter, prefix="/order", tags=["Order"])
 
 # Root Endpoint
 @app.get("/", tags=["Root"])

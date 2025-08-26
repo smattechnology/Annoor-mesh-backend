@@ -84,7 +84,7 @@ async def update_user(
             )
 
         user: User = db.query(User).filter(User.id == data.id).first()
-        if not user:
+        if not user:মাংস (Meat)
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"

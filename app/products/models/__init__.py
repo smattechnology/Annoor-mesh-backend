@@ -121,6 +121,16 @@ class Product(Base):
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
 
+    def as_order(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "category": self.category.as_dict(),
+            "unit": self.get_unit(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
     def as_dict(self):
         return {
             "id": self.id,

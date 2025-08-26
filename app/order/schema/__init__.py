@@ -22,3 +22,14 @@ class OrderPlaceSchema(BaseModel):
     totalMeal: int = Field(gt=0)  # Must be greater than 0
     budgetPerMeal: int = Field(gt=0)  # Must be greater than 0
     items: List[OrderItem]
+
+
+class NoteOrderInfo(BaseModel):
+    budget: int
+    students: int
+    note: str
+
+class NoteOrderPlaceSchema(BaseModel):
+    breakfast: Optional[NoteOrderInfo] = None
+    lunch: Optional[NoteOrderInfo] = None
+    dinner: Optional[NoteOrderInfo] = None
