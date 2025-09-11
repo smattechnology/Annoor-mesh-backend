@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd /root/main/backends/Annoor-mesh-backend
+            cd /root/main/backend/Annoor-mesh-backend
             git pull origin main
             source ./.venv/bin/activate
             pip install -r requirements.txt
