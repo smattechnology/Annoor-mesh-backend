@@ -100,37 +100,27 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     category = relationship("Category", back_populates="products")
-
-    items_unit = relationship("ItemUnit", back_populates="products")
+    items_unit = relationship("ItemUnit", back_populates="products", cascade="all, delete-orphan")
 
     def get_unit(self):
+        """Return the generic/default unit if available"""
         for i in self.items_unit:
             if i.is_generic:
                 return i.as_dict()
-                break
         return None
 
     def to_category(self):
+        unit = self.get_unit()
         return {
             "id": self.id,
             "name": self.name,
-            "price": self.price,
-            "unit": self.unite.as_dict(),
+            "price": unit["price"] if unit else None,
+            "unit": unit,
             "description": self.description,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
 
-    def as_order(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "category": self.category.as_dict(),
-            "unit": self.get_unit(),
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None
-        }
     def as_dict(self):
         return {
             "id": self.id,
