@@ -29,4 +29,4 @@ jobs:
             COMMIT_MSG=$(git log -1 --pretty=%B)
             alembic revision --autogenerate -m "$COMMIT_MSG"
             alembic upgrade head
-            sudo systemctl restart annoor_mesh_backend.service
+            sudo systemctl restart annoor_mess.service
