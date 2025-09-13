@@ -119,7 +119,7 @@ class NoteOrder(Base):
     order_for = Column(String(255), ForeignKey("messs.id", ondelete="CASCADE"), nullable=False)
     order_by = Column(String(255), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     status = Column(Enum(OrderStatusEnum, native_enum=False), default=OrderStatusEnum.PENDING, nullable=False)
-
+    budget = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -131,6 +131,7 @@ class NoteOrder(Base):
         return {
             "id": self.id,
             "status": self.status,
+            "budget": self.budget,
             "items": [item.as_dict() for item in self.items],
             "mess": self.mess.as_dict() if self.mess else None,  # Example: Show mess name
             "user": self.user.as_dict() if self.user else None,   # Example: Show user name
@@ -145,9 +146,8 @@ class NoteOrderItem(Base):
     id = Column(String(255), primary_key=True, default=lambda: str(uuid4()), index=True)
     order_id = Column(String(255), ForeignKey("note_orders.id", ondelete="CASCADE"), nullable=False)
     meal_time = Column(Enum(MealTimeEnum, native_enum=False), default=MealTimeEnum.BREAKFAST, nullable=False)
-    meal_budget = Column(Integer, default=0, nullable=False)
     total_meal = Column(Integer, default=0, nullable=False)
-    note = Column(String(500), nullable=True)
+    menu = Column(String(500), nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -158,9 +158,8 @@ class NoteOrderItem(Base):
         return {
             "id": self.id,
             "meal_time": self.meal_time,
-            "meal_budget": self.meal_budget,
             "total_meal": self.total_meal,
-            "note": self.note,
+            "menu": self.menu,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

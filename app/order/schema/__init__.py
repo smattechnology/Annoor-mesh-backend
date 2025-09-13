@@ -25,11 +25,11 @@ class OrderPlaceSchema(BaseModel):
 
 
 class NoteOrderInfo(BaseModel):
-    budget: int
-    students: int
-    note: str
+    total_meal: int
+    menu: str
 
 class NoteOrderPlaceSchema(BaseModel):
     breakfast: Optional[NoteOrderInfo] = None
     lunch: Optional[NoteOrderInfo] = None
     dinner: Optional[NoteOrderInfo] = None
+    budget: int

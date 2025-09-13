@@ -127,7 +127,8 @@ async def add_note_order(
     new_order = NoteOrder(
         id=order_id,
         order_for=user.allocated_mess_id,
-        order_by=user.id
+        order_by=user.id,
+        budget=data.budget
     )
     db.add(new_order)
 
@@ -144,9 +145,8 @@ async def add_note_order(
                 id=str(uuid4()),
                 order_id=order_id,
                 meal_time=meal_time,
-                meal_budget=meal_data.budget,
-                total_meal=meal_data.students,
-                note=meal_data.note
+                total_meal=meal_data.total_meal,
+                menu=meal_data.menu
             )
             db.add(new_order_item)
 
